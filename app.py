@@ -877,7 +877,7 @@ def summary():
 
     try:
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=prompt_messages,
             temperature=0.7,
             max_tokens = 500
