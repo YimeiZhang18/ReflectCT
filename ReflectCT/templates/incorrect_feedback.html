@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h3 class="text-danger">❌ You Did Not Get the Correct Answer</h3>
+
+  <div class="card my-3">
+    <div class="card-body">
+      <p><strong>Quiz:</strong> {{ question.question }}</p>
+
+      <p><strong>✅ Correct Answer:</strong> {{ correct_answer }}</p>
+
+      {% for img in question.solution_imgs %}
+        {% if img.caption %}
+          <p class="mt-2"><em>{{ img.caption }}</em></p>
+        {% endif %}
+        <img src="{{ url_for('static', filename=img.src) }}" class="img-fluid mb-3">
+      {% endfor %}
+
+      <p class="mt-3">{{ question.question_detail }}</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

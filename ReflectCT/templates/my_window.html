@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head><title>My Window</title></head>
+<body>
+    <h2>My Window (User ID: {{ user_id }})</h2>
+    {% if my_errors %}
+        <ul>
+        {% for qid, s in my_errors %}
+            <li>
+                <strong>Question ID:</strong> {{ qid }}<br>
+                <strong>Knowledge Point:</strong> {{ s.knowledge_point }}<br>
+                <strong>Style:</strong> {{ s.agent_style }}<br>
+                <strong>Summary:</strong>
+                <ul>
+                    {% for item in s.summary[0] %}
+                        <li>{{ item[0] }} - {{ item[1] }} - Tag: {{ item[2] }}</li>
+                    {% endfor %}
+                </ul>
+                <hr>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No mistakes submitted yet.</p>
+    {% endif %}
+</body>
+</html>

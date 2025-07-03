@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2 class="mb-4">Reflection Summary</h2>
+
+<div class="row">
+
+
+  <div class="col-md-6 mb-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-header bg-light fw-bold">Summary</div>
+      <div class="card-body" style="white-space: pre-wrap;">
+        {% if summary %}
+          <p class="card-text">{{ summary }}</p>
+        {% else %}
+          <p class="text-muted fst-italic">No summary generated yet. Please complete your reflection and click "Generate Summary".</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-md-6 mb-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-header bg-light fw-bold">Possible Mistake Type</div>
+      <div class="card-body">
+        {% if tag_suggestions %}
+          <form method="POST" action="{{ url_for('submit_summary') }}">
+            <p class="mb-2">Select one or more tags that best explain your mistake:</p>
+
+            <div class="form-group">
+              {% for tag in tag_suggestions %}
+                <div class="form-check mb-1">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="selected_tags"
+                    value="{{ tag }}"
+                    id="tag_{{ loop.index }}"
+                    {% if tag in selected_tags %}checked{% endif %}>
+                  <label class="form-check-label" for="tag_{{ loop.index }}">
+                    {{ tag }}
+                  </label>
+                </div>
+              {% endfor %}
+            </div>
+
+
+            <input type="hidden" name="summary_text" value="{{ summary }}">
+
+            <button type="submit" class="btn btn-success mt-3 w-100">
+              Submit to Mistake Commonplace
+            </button>
+          </form>
+        {% else %}
+          <p class="text-muted fst-italic">No tag suggestions generated. Please interact with the reflection assistant to receive suggestions.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+

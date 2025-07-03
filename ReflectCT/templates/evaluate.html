@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h3>Results</h3>
+  <hr>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% if wrong_questions %}
+    <form method="POST" action="{{ url_for('evaluate') }}">
+      <p>A Total Of {{ wrong_questions|length }} Wrong Quiz</p>
+
+      {% for question in wrong_questions %}
+        <div class="card mb-3 border-danger">
+          <div class="card-body">
+            <h5>Quiz {{ question.id }}</h5>
+            <p><strong>Question：</strong> {{ question.question }}</p>
+
+            {% if question.question_detail %}
+              <p><strong>Details：</strong> {{ question.question_detail }}</p>
+            {% endif %}
+
+            {% for img in question.solution_img %}
+              <div class="text-center my-2">
+                <img src="{{ url_for('static', filename=img.src) }}" class="img-fluid" alt="image">
+                {% if img.caption %}
+                  <p class="text-muted"><em>{{ img.caption }}</em></p>
+                {% endif %}
+              </div>
+            {% endfor %}
+
+
+            <p><strong>Correct Answer：</strong> {{ question.correct_answer }}</p>
+            <p><strong>Results：</strong> ❌ Wrong </p>
+
+            <div class="form-check">
+              <input class="form-check-input"
+                     type="radio"
+                     name="question_id"
+                     value="{{ question.id }}"
+                     id="qid{{ question.id }}"
+                     {% if loop.first %} required {% endif %}>
+              <label class="form-check-label" for="qid{{ question.id }}">
+                Select This Question to Reflect
+              </label>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+
+      <div class="text-center mt-4">
+        <input type="hidden" name="style" value="neutral">
+        <button type="submit" class="btn btn-primary btn-lg">Start Reflection</button>
+      </div>
+    </form>
+  {% else %}
+    <div class="alert alert-success mt-4">
+      🎉 All answers are correct!
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+
+
+
+

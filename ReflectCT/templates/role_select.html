@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Welcome to ReflectCT</h2>
+
+    {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+    {% endif %}
+
+
+    <form method="POST">
+        <div class="glass-card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Continue as Student</h5>
+                <p class="card-text">Click the button below to start your reflection activity.</p>
+                <input type="text" name="custom_id" class="form-control mb-3" placeholder="Enter your name or ID" required>
+
+                <input type="hidden" name="role" value="student">
+                <button type="submit" class="btn btn-primary">👩‍🎓 I am a Student</button>
+            </div>
+        </div>
+    </form>
+
+
+    <form method="POST">
+        <div class="glass-card">
+            <div class="card-body">
+                <h5 class="card-title">Admin Access</h5>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Enter Admin Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Admin Password">
+                </div>
+                <input type="hidden" name="role" value="admin">
+                <button type="submit" class="btn btn-secondary">🛠️ I am an Admin</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

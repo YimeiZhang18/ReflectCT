@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block content %}
+<form method="POST">
+  {% for q in questions %}
+    <div class="card mb-3">
+      <div class="card-header">Quiz {{ q.id }}</div>
+      <div class="card-body">
+        <p><strong>Question：</strong>{{ q.question }}</p>
+
+        {% for img in q.solution_img %}
+
+          {% if img.caption %}
+            <p class="mt-3"><em>{{ img.caption }}</em></p>
+          {% endif %}
+
+          <div class="text-center my-3">
+            <img src="{{ url_for('static', filename=img.src) }}"
+                 alt="Solution image for question {{ q.id }}"
+                 class="img-fluid d-inline-block mb-2"
+                 style="max-width: 100%;">
+          </div>
+        {% endfor %}
+
+
+
+        <p class="mt-3">{{ q.question_detail }}</p>
+
+        <p><strong>Selection：</strong></p>
+        {% for option in q.options %}
+          {% set idx = loop.index0 %}
+          <div class="form-check mb-1">
+            <input class="form-check-input" type="radio" name="answer_{{ q.id }}" value="{{ option | join(', ') }}" id="opt{{ q.id }}_{{ idx }}" required>
+
+            <label class="form-check-label" for="opt{{ q.id }}_{{ idx }}">
+              {% if option.src is defined %}
+                <img src="{{ url_for('static', filename = option.src) }}" alt="Option image" class = "img-fluid" style = "max-width:200px;">
+              {% else %}
+              {{ option | join(", ") }}
+              {% endif %}
+            </label>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+
+  <button type="submit" class="btn btn-primary w-100 mt-3">Submit Answers</button>
+</form>
+{% endblock %}
+

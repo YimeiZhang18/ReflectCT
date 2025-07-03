@@ -1,0 +1,12 @@
+<h2>All Users</h2>
+<ul class="list-group mt-3">
+  {% for user in users %}
+    <li class="list-group-item">
+      <a href="{{ url_for('admin_user_view', user_id=user) }}">{{ user }}</a>
+    </li>
+  {% else %}
+    <li class="list-group-item text-muted">No users found.</li>
+  {% endfor %}
+</ul>
+
+

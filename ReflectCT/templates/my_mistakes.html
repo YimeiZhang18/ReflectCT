@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h2 class="mb-4">My Unreflected Mistakes</h2>
+
+<div class="row">
+  {% for m in mistakes %}
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header">Quiz {{ m.id }}</div>
+        <div class="card-body">
+
+          {% if m.question %}
+            <p><strong>Question:</strong><br>{{ m.question | safe }}</p>
+          {% endif %}
+
+          {% if m.solution_img %}
+            {% for img in m.solution_img %}
+              <div class="text-center my-3">
+                <img src="{{ url_for('static', filename=img.src) }}" class="img-fluid mb-2" style="max-width: 100%;">
+                {% if img.caption %}
+                  <p class="text-muted"><em>{{ img.caption }}</em></p>
+                {% endif %}
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          {% if m.question_detail %}
+            <p><strong>Details:</strong><br>{{ m.question_detail | safe }}</p>
+          {% endif %}
+
+          {% if m.options %}
+            <hr>
+            <strong>Options:</strong>
+            <ul class="list-unstyled mt-2">
+              {% for opt in m.options %}
+                {% if opt.src %}
+                  <li class="text-center my-2">
+                    <img src="{{ url_for('static', filename=opt.src) }}" class="img-fluid" style="max-height: 200px;">
+                  </li>
+                {% else %}
+                  <li class="mb-1">• {{ opt | join(", ") }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          <form method="POST" action="{{ url_for('evaluate') }}" class="mt-3">
+            <input type="hidden" name="question_id" value="{{ m.id }}">
+            <input type="hidden" name="style" value="neutral">
+            <button type="submit" class="btn btn-primary">Reflect</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+  {% if not mistakes %}
+    <p>🎉 You Have No Reflection Cases!</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+

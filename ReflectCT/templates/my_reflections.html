@@ -1,0 +1,72 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h2 class="mb-4">My Reflections</h2>
+
+<div class="row">
+  {% for case in cases %}
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header">Quiz {{ case.qid }}</div>
+        <div class="card-body">
+
+          {% if case.question %}
+            <p><strong>Question:</strong><br>{{ case.question | safe }}</p>
+          {% endif %}
+
+          {% if case.solution_img %}
+            {% for img in case.solution_img %}
+              <div class="text-center my-3">
+                <img src="{{ url_for('static', filename=img.src) }}" class="img-fluid mb-2" style="max-width: 100%;">
+                {% if img.caption %}
+                  <p class="text-muted"><em>{{ img.caption }}</em></p>
+                {% endif %}
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          {% if case.question_detail %}
+            <p><strong>Details:</strong><br>{{ case.question_detail | safe }}</p>
+          {% endif %}
+
+          {% if case.options %}
+            <hr>
+            <strong>Options:</strong>
+            <ul class="list-unstyled mt-2">
+              {% for opt in case.options %}
+                {% if opt.src %}
+                  <li class="text-center my-2">
+                    <img src="{{ url_for('static', filename=opt.src) }}" class="img-fluid" style="max-height: 200px;">
+                  </li>
+                {% else %}
+                  <li class="mb-1">• {{ opt | join(", ") }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          {% if case.tags %}
+            <p><strong>Mistake Type:</strong> {{ case.tags | join(', ') }}</p>
+          {% endif %}
+
+          {% if case.steps %}
+            <hr>
+            <strong>Reflection Steps:</strong>
+            <ul class="mt-2">
+              {% for title, msg in case.steps %}
+                <li class="mb-2"><strong>{{ title }}:</strong> {{ msg }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+  {% if not cases %}
+    <p>🎉 You Have Not Yet Submitted Any Reflection Cases</p>
+  {% endif %}
+</div>
+{% endblock %}
+

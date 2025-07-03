@@ -1,0 +1,79 @@
+<h2>User Timeline for {{ user_id }}</h2>
+
+{% if logs %}
+  <ul class="list-unstyled">
+    {% for entry in logs %}
+      <li class="mb-4 border-bottom pb-2">
+        <strong>{{ entry.timestamp }}</strong><br>
+
+        {% if entry.type == "tags" %}
+          <div class="mt-2">
+            <strong>Tags for Q{{ entry.qid }}:</strong><br>
+
+            {% if entry.suggested %}
+              <div class="ms-3">
+                <em>Suggested by GPT:</em>
+                <ul>
+                  {% for tag in entry.suggested %}
+                    <li>{{ tag }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            {% if entry.selected %}
+              <div class="ms-3">
+                <em>Selected by User:</em>
+                <ul>
+                  {% for tag in entry.selected %}
+                    <li>{{ tag }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% else %}
+              <em class="text-muted ms-3">No tags selected by the user.</em>
+            {% endif %}
+          </div>
+
+        {% elif entry.type == "comments" %}
+          <div class="mt-2">
+            <strong>Comment on Q{{ entry.qid }}:</strong> {{ entry.comment }}
+          </div>
+
+        {% elif entry.type == "likes" %}
+          <div class="mt-2">
+            <strong>Liked a comment on Q{{ entry.qid }}</strong>
+          </div>
+
+        {% elif entry.type == "replies" %}
+          <div class="mt-2">
+            <strong>Reply on Q{{ entry.qid }}:</strong> {{ entry.reply }}
+          </div>
+
+        {% elif entry.type == "reflection" %}
+          <div class="mt-2">
+            <strong>Reflection on Q{{ entry.qid }}</strong><br>
+            <div class="ms-3">
+              <strong>{{ entry.step_title }}:</strong><br>
+              <em>User:</em> {{ entry.input }}<br>
+              <em>LLM:</em> {{ entry.llm_response }}
+            </div>
+          </div>
+
+        {% elif entry.type == "quiz" %}
+          <div class="mt-2">
+            <strong>Quiz Attempt</strong><br>
+            <div class="ms-3">
+              <strong>Answers:</strong> {{ entry.answers }}<br>
+              <strong>Correctness:</strong> {{ entry.correctness }}
+            </div>
+          </div>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted">No logs found for this user.</p>
+{% endif %}
+
+

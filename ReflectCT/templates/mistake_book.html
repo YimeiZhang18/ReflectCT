@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2> ReflectCT Public Mistake Book</h2>
+
+
+  <form method="GET" class="form-inline mb-4">
+    <label>Question No.:</label>
+    <select name="filter_qid" class="form-control mx-2">
+      <option value="">All</option>
+      {% for qid in mistake_summary.keys() %}
+        <option value="{{ qid }}" {% if qid|string == filter_qid %}selected{% endif %}>Question {{ qid }}</option>
+      {% endfor %}
+    </select>
+
+    <label class="ml-2">Min Submissions:</label>
+    <input type="number" name="min_submit" value="{{ min_submit or 0 }}" class="form-control mx-2" min="0">
+
+    <button type="submit" class="btn btn-primary">Filter</button>
+  </form>
+
+  {% for qid, info in mistake_summary.items() %}
+    <div class="card my-3 shadow-sm">
+      <div class="card-header">
+        <strong>Question {{ qid }}</strong>
+      </div>
+      <div class="card-body">
+
+        {% if info.question %}
+          <p><strong>Question:</strong><br>{{ info.question | safe }}</p>
+        {% endif %}
+
+
+        {% if info.solution_img %}
+          {% for img in info.solution_img %}
+            <div class="text-center my-3">
+              <img src="{{ url_for('static', filename=img.src) }}" class="img-fluid mb-2" style="max-width: 100%;">
+              {% if img.caption %}
+                <p class="text-muted"><em>{{ img.caption }}</em></p>
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+
+        {% if info.question_detail %}
+          <p><strong>Details:</strong><br>{{ info.question_detail | safe }}</p>
+        {% endif %}
+
+
+        {% if info.options %}
+          <hr>
+          <strong>Options:</strong>
+          <ul class="list-unstyled mt-2">
+            {% for opt in info.options %}
+              {% if opt.src %}
+                <li class="text-center my-2">
+                  <img src="{{ url_for('static', filename=opt.src) }}" class="img-fluid" style="max-height: 200px;">
+                </li>
+              {% else %}
+                <li class="mb-1">• {{ opt | join(", ") }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+
+        <p class="mt-3"><strong>Submissions:</strong> {{ info.times }}</p>
+
+
+        <h5>Mistake Type:</h5>
+        <div class="mb-3">
+          {% set max_count = info.tag_summary.values()|max if info.tag_summary else 1 %}
+          {% for tag, count in info.tag_summary.items() %}
+            {% set opacity = 0.3 + (count / max_count * 0.7) %}
+            <span class="badge badge-pill mx-1 my-1"
+                  style="background-color: rgba(0, 123, 255, {{ opacity }}); color: white; font-size: 0.9em;">
+              {{ tag }} ×{{ count }}
+            </span>
+          {% else %}
+            <span class="text-muted">No mistake tags yet.</span>
+          {% endfor %}
+        </div>
+
+
+        <h5 class="mt-4">💬 Comments:</h5>
+        <ul class="list-group mb-3">
+          {% for msg in info.messages %}
+            {% set cid = loop.index0 %}
+            <li class="list-group-item">
+              {{ msg.text }} <br>
+              👍 {{ msg.likes }} like{{ msg.likes != 1 and 's' or '' }}
+              <form method="POST" action="{{ url_for('like_comment', qid=qid, cid=cid) }}" style="display:inline;">
+                <button class="btn btn-sm btn-outline-success">Like</button>
+              </form>
+
+              {% if msg.replies %}
+                <ul class="mt-2">
+                  {% for reply in msg.replies %}
+                    <li><em>{{ reply }}</em></li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+
+
+              <form method="POST" action="{{ url_for('reply_to_comment', qid=qid, cid=cid) }}" class="mt-2">
+                <input name="reply" class="form-control" placeholder="Reply to this comment..." required>
+                <button class="btn btn-sm btn-secondary mt-1">Submit Reply</button>
+              </form>
+            </li>
+          {% else %}
+            <li class="list-group-item">No comments yet.</li>
+          {% endfor %}
+        </ul>
+
+
+        <form method="POST" action="{{ url_for('comment_on_mistake', qid=qid) }}">
+          <input name="comment" class="form-control" placeholder="Add a comment..." required>
+          <button class="btn btn-sm btn-primary mt-2">Submit Comment</button>
+        </form>
+      </div>
+    </div>
+  {% else %}
+    <p class="text-muted">No submissions found.</p>
+  {% endfor %}
+</div>
+{% endblock %}
+
+
+

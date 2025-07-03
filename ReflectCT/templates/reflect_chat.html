@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="row">
+
+  <div class="col-md-6 question-panel">
+    <h5 class="mb-3"><span style="color: black;">Current Quiz</span></h5>
+    <div class="card">
+      <div class="card-header">Quiz {{ quiz.id }}</div>
+      <div class="card-body">
+        {% if quiz.question %}
+          <p><strong>Question:</strong><br>{{ quiz.question | safe }}</p>
+        {% endif %}
+
+        {% if quiz.solution_img %}
+          {% for img in quiz.solution_img %}
+            <div class="text-center my-3">
+              <img src="{{ url_for('static', filename=img.src) }}" class="img-fluid mb-2" style="max-width: 100%;">
+              {% if img.caption %}
+                <p class="text-muted"><em>{{ img.caption }}</em></p>
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        {% if quiz.question_detail %}
+          <p><strong>Details:</strong><br>{{ quiz.question_detail | safe }}</p>
+        {% endif %}
+
+        {% if quiz.options %}
+          <hr>
+          <strong>Options:</strong>
+          <ul class="list-unstyled mt-2">
+            {% for opt in quiz.options %}
+              {% if opt.src %}
+                <li class="text-center my-2">
+                  <img src="{{ url_for('static', filename=opt.src) }}" class="img-fluid" style="max-height: 200px;">
+                </li>
+              {% else %}
+                <li class="mb-1">• {{ opt | join(", ") }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-md-6">
+    <h5 class="mb-3">💬 <span style="color: black;">Reflection Chat</span></h5>
+
+
+<div id="chat-box" class="card mb-3" style="max-height: 1000px; min-height: 300px; overflow-y: auto;">
+  <div class="card-body pt-3 pb-2 px-3" style="white-space: pre-wrap; line-height: 1.6; font-size: 1.05rem;">
+    {% for entry in chat_history %}
+      {% if "I'm ready for a summary" not in entry['content'] %}
+        <div class="{% if not loop.first %}mt-3{% endif %}" style="display: flex; align-items: flex-start; gap: 6px;">
+          {% if entry['role'] == 'user' %}
+            <span style="white-space: nowrap;"><strong>👧🏻 You:</strong></span>
+            <span>{{ entry['content'] }}</span>
+          {% elif entry['role'] == 'assistant' %}
+            <span style="white-space: nowrap;"><strong>🤖 ReflectCT:</strong></span>
+            <span>{{ entry['content'] }}</span>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+
+
+    <!-- Input Form -->
+    <form method="POST" onsubmit="captureReflection()">
+      <div class="form-group">
+        <label for="msg"><strong>💭 Continue your reflection</strong></label>
+        <textarea class="form-control mt-2" id="msg" name="msg" rows="4" placeholder="Type your reflection here..." required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">Send</button>
+    </form>
+
+    <!-- Summary Button -->
+    <form action="{{ url_for('summary') }}" method="post" class="mt-3" onsubmit="captureReflection()">
+      <input type="hidden" name="latest_reflection" id="latest_reflection">
+      <button type="submit" class="btn btn-success">Generate Summary</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function captureReflection() {
+    const reflectionText = document.getElementById("msg").value;
+    document.getElementById("latest_reflection").value = reflectionText;
+  }
+</script>
+
+{% endblock %}
