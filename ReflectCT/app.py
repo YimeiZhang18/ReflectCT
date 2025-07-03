@@ -789,7 +789,7 @@ def reflect():
                 print("Chat history being sent to GPT:", session['chat_history'])
 
                 response = client.chat.completions.create(
-                    model="gpt-4",
+                    model="gpt-4o",
                     messages=session['chat_history'],
                     temperature=0.7,
                     max_tokens = 500
@@ -877,7 +877,7 @@ def summary():
 
     try:
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=prompt_messages,
             temperature=0.7,
             max_tokens = 500
